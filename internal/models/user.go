@@ -1,5 +1,7 @@
 package models
 
+// user struct
+
 /*
 type user struct {
 	ID       string
