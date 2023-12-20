@@ -1,0 +1,7 @@
+database:
+  db_user: "leviolmz"
+  db_pass: "NMEMxrWaf9-wl7gNPndg6i3OwNT-ryIY"
+  db_net: "tcp"
+  db_addr: "flora.db.elephantsql.com" 
+  db_name: "leviolmz"
+  db_port: "5432"
