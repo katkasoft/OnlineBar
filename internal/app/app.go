@@ -17,6 +17,7 @@ func StartServer() {
 
 	r.GET("/ping", rest.TestFunc)
 	r.GET("/login", rest.LoginHandler)
+	r.POST("/register", rest.RegisterHandler)
 
 	if err := r.Run(fmt.Sprintf("%s:%s", host, port)); err != nil {
 		log.Println("Failed to start server")
