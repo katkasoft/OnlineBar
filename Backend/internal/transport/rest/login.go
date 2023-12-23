@@ -1,8 +1,9 @@
 package rest
 
 import (
-	"OnlineBar/internal/database/postgresql"
-	"OnlineBar/internal/models"
+	"OnlineBar/Backend/internal/database/postgresql"
+	"OnlineBar/Backend/internal/models"
+	"OnlineBar/Backend/internal/services"
 	"log"
 	"net/http"
 
@@ -11,7 +12,6 @@ import (
 )
 
 func LoginHandler(c *gin.Context) {
-
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -21,8 +21,8 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	if user.Name == "" || user.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invaild required fields"})
-		log.Println("Error reqired fields")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid required fields"})
+		log.Println("Error required fields")
 		return
 	}
 
@@ -46,7 +46,13 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"succesful": "User autorizated"})
-	log.Printf("User %s autorizated", user.Name)
+	// Генерация JWT-токена
+	token, err := services.GenerateJWT(user.Name)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to generate JWT"})
+		return
+	}
 
+	log.Printf("User %s authorized", user.Name)
+	log.Println(token)
 }

@@ -2,7 +2,7 @@
 package postgresql
 
 import (
-	"OnlineBar/pkg/cfg"
+	"OnlineBar/Backend/pkg/cfg"
 	"database/sql"
 	"fmt"
 	"log"
@@ -21,14 +21,12 @@ func init() {
 		config.Database.DBUser, config.Database.DBPass, config.Database.DBAddr,
 		config.Database.DBPort, config.Database.DBName)
 
-	// Get a database handle.
 	var err error
 	db, err = sql.Open("postgres", pqConnStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Ping the database to check the connection.
 	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)

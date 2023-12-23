@@ -1,8 +1,8 @@
 package main
 
 import (
-	"OnlineBar/internal/app"
-	_ "OnlineBar/internal/database/postgresql"
+	"OnlineBar/Backend/internal/app"
+	_ "OnlineBar/Backend/internal/database/postgresql"
 	"log"
 )
 
