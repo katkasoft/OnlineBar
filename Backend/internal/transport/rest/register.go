@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"OnlineBar/internal/database/postgresql"
-	"OnlineBar/internal/models"
+	"OnlineBar/Backend/internal/database/postgresql"
+	"OnlineBar/Backend/internal/models"
 	"log"
 	"net/http"
 
