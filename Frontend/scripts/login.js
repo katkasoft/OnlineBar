@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
   }
   
-  function redirectToRegister() {и
+  function redirectToRegister() {
     console.log("Redirecting to registration page");
     window.location.href = "/registration"
   }
