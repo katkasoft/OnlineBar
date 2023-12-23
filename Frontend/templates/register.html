@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tavern</title>
+        <link rel="stylesheet" type="text/css" href="static/styles/style.css">
+    </head>
+    <body>
+        <form id="Register">
+            <input type="email" id="email" name="username"  placeholder="Введите вашу почту" required>
+            <br>
+            <input type="text" id="username" name="username" placeholder="Введите ваше имя" >
+            <br>
+            <input type="password" id="password" name="password" placeholder="Введите пароль">
+            <br>
+            <button type="button" onclick="submitRegister()" class="register-button-register">Зарегистрироваться</button>
+            <br>
+            <button type="button" onclick="redirectToLogin()" class="register-button-login">Авторизация</button>
+        </form>
+        <script src="static/scripts/register.js"></script>
+    </body>
+</html>

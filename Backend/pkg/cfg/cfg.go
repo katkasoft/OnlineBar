@@ -26,7 +26,7 @@ type Server_Config struct {
 }
 
 func DBConfig() Database_Config {
-	data, err := os.ReadFile("configs/db.yml")
+	data, err := os.ReadFile("Backend/configs/db.yml")
 	if err != nil {
 		log.Fatalf("Error reading YAML file: %v", err)
 	}
@@ -41,7 +41,7 @@ func DBConfig() Database_Config {
 }
 
 func ServerConfig() Server_Config {
-	data, err := os.ReadFile("configs/server_config.yml")
+	data, err := os.ReadFile("Backend/configs/server_config.yml")
 	if err != nil {
 		log.Fatalf("Error reading YAML file: %v", err)
 	}
