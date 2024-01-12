@@ -13,7 +13,8 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("Frontend/templates/*")
 
-	r.Static("/static", "./Frontend") // Обновленный путь к статическим файлам
+	/*r.Static("/static", "./Frontend")
+
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", gin.H{
@@ -32,14 +33,15 @@ func setupRouter() *gin.Engine {
 			"title": "Register page",
 		})
 	})
+	*/
 
 	r.GET("/ping", rest.TestFunc)
 	r.POST("/login", rest.LoginHandler)
 	r.POST("/register", rest.RegisterHandler)
+	r.POST("/buy", rest.BuyHandler)
 
 	return r
 }
-
 func StartServer() {
 	config := cfg.ServerConfig()
 	port := config.Server.Port

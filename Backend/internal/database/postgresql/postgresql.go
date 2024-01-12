@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	// Import the PostgreSQL driver
 	"github.com/google/uuid"
@@ -69,4 +70,27 @@ func GetUserPassword(name string) (string, error) {
 		return "", err
 	}
 	return hashedPassword, nil
+}
+
+func GetUserID(name string) (string, error) {
+	var id string
+	err := db.QueryRow("SELECT id FROM \"User\" WHERE name = $1", name).Scan(&id)
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
+
+}
+
+func PostBuyList(userID string, product string, price float64, quantity float64, date time.Time) error {
+	_, err := db.Exec(`
+		INSERT INTO BuyList (userID, name, price, quantity, date)
+		VALUES ($1, $2, $3, $4, $5)`, userID, product, price, quantity, date)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
