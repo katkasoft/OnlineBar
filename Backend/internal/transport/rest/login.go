@@ -27,32 +27,38 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	if err, exist := postgresql.UserExist(user.Name, user.Email); err != nil || exist {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error wrong password or name"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
 		log.Println(err)
 		return
 	}
 
 	storedPassword, err := postgresql.GetUserPassword(user.Name)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error retrieving user data"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
 		log.Println(err)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(user.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
+		log.Println(err)
+		return
+	}
+
+	if user.ID, err = postgresql.GetUserID(user.Name); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error to claim ID"})
 		log.Println(err)
 		return
 	}
 
 	// Генерация JWT-токена
-	token, err := services.GenerateJWT(user.Name)
+	token, err := services.GenerateJWT(user.Name, user.ID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to generate JWT"})
 		return
 	}
 
+	c.JSON(http.StatusOK, gin.H{"token": token})
 	log.Printf("User %s authorized", user.Name)
-	log.Println(token)
 }
