@@ -2,6 +2,7 @@
 package postgresql
 
 import (
+	"OnlineBar/Backend/internal/models"
 	"OnlineBar/Backend/pkg/cfg"
 	"database/sql"
 	"fmt"
@@ -93,4 +94,30 @@ func PostBuyList(userID string, product string, price float64, quantity float64,
 	}
 
 	return nil
+}
+
+func GetBuyList(userID string) (models.ProductList, error) {
+	var productList models.ProductList
+
+	rows, err := db.Query("SELECT name, price, quantity, date FROM buylist WHERE userid = $1", userID)
+	if err != nil {
+		return productList, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var product models.Product
+		err := rows.Scan(&product.Name, &product.Cost, &product.Quantity, &product.Data)
+		if err != nil {
+			return productList, err
+		}
+		productList.Products = append(productList.Products, product)
+	}
+
+	if err := rows.Err(); err != nil {
+		return productList, err
+	}
+
+	return productList, nil
 }

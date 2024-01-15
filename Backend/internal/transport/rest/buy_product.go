@@ -37,4 +37,6 @@ func BuyHandler(c *gin.Context) {
 		postgresql.PostBuyList(claims.ID, product.Name, product.Cost, product.Quantity, time.Now())
 	}
 
+	c.JSON(http.StatusOK, gin.H{"done": "Product list added"})
+	log.Printf("User with id %s added list of product", claims.ID)
 }
