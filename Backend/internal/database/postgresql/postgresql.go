@@ -2,10 +2,13 @@
 package postgresql
 
 import (
+	"OnlineBar/Backend/internal/models"
 	"OnlineBar/Backend/pkg/cfg"
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	// Import the PostgreSQL driver
@@ -34,6 +37,23 @@ func init() {
 	}
 
 	log.Println("Database connected!")
+}
+
+func StartTransaction() (*sql.Tx, error) {
+	tx, err := db.Begin()
+	return tx, err
+
+}
+
+func EndTransaction(tx *sql.Tx) error {
+
+	if err := tx.Commit(); err != nil {
+
+		return err
+
+	}
+
+	return nil
 }
 
 func AddUser(name string, email string, password string, os string) error {
@@ -83,8 +103,9 @@ func GetUserID(name string) (string, error) {
 
 }
 
-func PostBuyList(userID string, product string, price float64, quantity float64, date time.Time) error {
-	_, err := db.Exec(`
+func PostBuyList(tx *sql.Tx, userID string, product string, price float64, quantity float64, date time.Time) error {
+
+	_, err := tx.Exec(`
 		INSERT INTO BuyList (userID, name, price, quantity, date)
 		VALUES ($1, $2, $3, $4, $5)`, userID, product, price, quantity, date)
 
@@ -92,5 +113,56 @@ func PostBuyList(userID string, product string, price float64, quantity float64,
 		return err
 	}
 
+	_, err = tx.Exec("UPDATE \"User\" SET balance = balance - $1", price)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func GetBuyList(userID string) (models.ProductList, error) {
+	var productList models.ProductList
+
+	rows, err := db.Query("SELECT name, price, quantity, date FROM buylist WHERE userid = $1", userID)
+	if err != nil {
+		return productList, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var product models.Product
+		err := rows.Scan(&product.Name, &product.Cost, &product.Quantity, &product.Data)
+		if err != nil {
+			return productList, err
+		}
+		productList.Products = append(productList.Products, product)
+	}
+
+	if err := rows.Err(); err != nil {
+		return productList, err
+	}
+
+	return productList, nil
+}
+func GetBalance(userID string) (float64, error) {
+	var balanceStr string
+
+	err := db.QueryRow("SELECT balance FROM \"User\" WHERE id = $1", userID).Scan(&balanceStr)
+	if err != nil {
+		return 0, err
+	}
+
+	// Удаление символа "$" из строки
+	balanceStr = strings.Replace(balanceStr, "$", "", -1)
+
+	// Преобразование строки в float64
+	balance, err := strconv.ParseFloat(balanceStr, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return balance, nil
 }

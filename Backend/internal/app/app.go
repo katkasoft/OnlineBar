@@ -36,9 +36,11 @@ func setupRouter() *gin.Engine {
 	*/
 
 	r.GET("/ping", rest.TestFunc)
+	r.GET("/product", rest.GetProductList)
 	r.POST("/login", rest.LoginHandler)
 	r.POST("/register", rest.RegisterHandler)
 	r.POST("/buy", rest.BuyHandler)
+	r.GET("/balance", rest.GetBalance)
 
 	return r
 }
