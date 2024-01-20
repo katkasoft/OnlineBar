@@ -37,6 +37,23 @@ func init() {
 	log.Println("Database connected!")
 }
 
+func StartTransaction() (*sql.Tx, error) {
+	tx, err := db.Begin()
+	return tx, err
+
+}
+
+func EndTransaction(tx *sql.Tx) error {
+
+	if err := tx.Commit(); err != nil {
+
+		return err
+
+	}
+
+	return nil
+}
+
 func AddUser(name string, email string, password string, os string) error {
 	id := uuid.New()
 	_, err := db.Query("INSERT INTO \"User\" (id, name, email, password, os) VALUES ($1, $2, $3, $4, $5)", id, name, email, password, os)
@@ -84,10 +101,17 @@ func GetUserID(name string) (string, error) {
 
 }
 
-func PostBuyList(userID string, product string, price float64, quantity float64, date time.Time) error {
-	_, err := db.Exec(`
+func PostBuyList(tx *sql.Tx, userID string, product string, price float64, quantity float64, date time.Time) error {
+
+	_, err := tx.Exec(`
 		INSERT INTO BuyList (userID, name, price, quantity, date)
 		VALUES ($1, $2, $3, $4, $5)`, userID, product, price, quantity, date)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("UPDATE \"User\" SET balance = balance - $1", price)
 
 	if err != nil {
 		return err
