@@ -7,6 +7,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	// Import the PostgreSQL driver
@@ -144,4 +146,23 @@ func GetBuyList(userID string) (models.ProductList, error) {
 	}
 
 	return productList, nil
+}
+func GetBalance(userID string) (float64, error) {
+	var balanceStr string
+
+	err := db.QueryRow("SELECT balance FROM \"User\" WHERE id = $1", userID).Scan(&balanceStr)
+	if err != nil {
+		return 0, err
+	}
+
+	// Удаление символа "$" из строки
+	balanceStr = strings.Replace(balanceStr, "$", "", -1)
+
+	// Преобразование строки в float64
+	balance, err := strconv.ParseFloat(balanceStr, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return balance, nil
 }
