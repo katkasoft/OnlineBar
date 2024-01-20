@@ -5,10 +5,9 @@ import (
 	"OnlineBar/Backend/internal/models"
 	"OnlineBar/Backend/pkg/cfg"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 	"time"
 
 	// Import the PostgreSQL driver
@@ -104,6 +103,7 @@ func GetUserID(name string) (string, error) {
 }
 
 func PostBuyList(tx *sql.Tx, userID string, product string, price float64, quantity float64, date time.Time) error {
+	var balance float64
 
 	_, err := tx.Exec(`
 		INSERT INTO BuyList (userID, name, price, quantity, date)
@@ -113,10 +113,17 @@ func PostBuyList(tx *sql.Tx, userID string, product string, price float64, quant
 		return err
 	}
 
-	_, err = tx.Exec("UPDATE \"User\" SET balance = balance - $1", price)
+	_, err = tx.Exec("UPDATE \"User\" SET balance = balance - $1 WHERE id = $2", price, userID)
 
 	if err != nil {
 		return err
+	}
+
+	err = tx.QueryRow("SELECT balance FROM \"User\" WHERE id = $1", userID).Scan(&balance)
+	if balance < 0 || err != nil {
+		log.Println(balance)
+		log.Println("Don't have enough money")
+		return errors.New("don't have enough money")
 	}
 
 	return nil
@@ -147,22 +154,24 @@ func GetBuyList(userID string) (models.ProductList, error) {
 
 	return productList, nil
 }
+
 func GetBalance(userID string) (float64, error) {
-	var balanceStr string
+	var balance float64
 
-	err := db.QueryRow("SELECT balance FROM \"User\" WHERE id = $1", userID).Scan(&balanceStr)
-	if err != nil {
-		return 0, err
-	}
-
-	// Удаление символа "$" из строки
-	balanceStr = strings.Replace(balanceStr, "$", "", -1)
-
-	// Преобразование строки в float64
-	balance, err := strconv.ParseFloat(balanceStr, 64)
+	err := db.QueryRow("SELECT balance FROM \"User\" WHERE id = $1", userID).Scan(&balance)
 	if err != nil {
 		return 0, err
 	}
 
 	return balance, nil
+}
+
+func UpdateBalance(balance float64, userID string) error {
+
+	_, err := db.Query("UPDATE \"User\" SET balance = $1 WHERE id = $2", balance, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
