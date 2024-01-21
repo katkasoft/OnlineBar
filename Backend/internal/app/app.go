@@ -15,7 +15,6 @@ func setupRouter() *gin.Engine {
 
 	r.Static("/static", "./Frontend")
 
-
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", gin.H{
 			"title": "Главная страница",
@@ -28,7 +27,7 @@ func setupRouter() *gin.Engine {
 		})
 	})
 
-	r.GET("/registration", func(c *gin.Context) {
+	r.GET("/register", func(c *gin.Context) {
 		c.HTML(200, "register.html", gin.H{
 			"title": "Register page",
 		})

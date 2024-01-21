@@ -1,0 +1,50 @@
+* {
+  color: white;
+}
+
+body {
+  background-color: #262626;
+}
+
+button {
+  background-color: #4c4c4c;
+  font-size: large;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+button:hover {
+  background-color: #636363;
+}
+
+.mainbtn {
+  background-color: rgb(0, 174, 255);
+}
+.mainbtn:hover {
+  background-color: rgb(68, 196, 255);
+}
+
+#center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input {
+  background-color: #515151;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+}
+input:hover, input:focus {
+  background-color: #636363;
+}
+
+a {
+  color: rgb(0, 157, 255);
+  text-decoration: none;
+}
+a:hover {
+  color: rgb(78, 187, 255);
+}
