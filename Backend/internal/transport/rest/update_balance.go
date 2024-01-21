@@ -15,26 +15,26 @@ func UpdateBalance(c *gin.Context) {
 	var user models.User
 
 	if err := services.CheckJWT(c.GetHeader("Authorization"), &claims); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		c.JSON(http.StatusBadRequest, "Invalid token")
 		log.Println("Invalid token")
 		return
 	}
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, err.Error())
 		log.Println("Invalid format")
 		return
 	}
 
 	err := postgresql.UpdateBalance(user.Balance, claims.ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Error"})
+		c.JSON(http.StatusBadRequest, "Internal Error")
 		log.Println("Error to update User Balance")
 		log.Println(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"User balance updated: ": user.Balance})
+	c.JSON(http.StatusOK, user.Balance)
 	log.Printf("User with id %s get balance", claims.ID)
 
 }

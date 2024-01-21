@@ -15,7 +15,7 @@ func GetProductList(c *gin.Context) {
 	var productList models.ProductList
 
 	if err := services.CheckJWT(c.GetHeader("Authorization"), &claims); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		c.JSON(http.StatusBadRequest, "Invalid token")
 		log.Println("Invalid token")
 		return
 	}
@@ -24,7 +24,7 @@ func GetProductList(c *gin.Context) {
 	productList, err := postgresql.GetBuyList(claims.ID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error get product list"})
+		c.JSON(http.StatusBadRequest, "Error get product list")
 		log.Println(err)
 		return
 	}

@@ -15,35 +15,35 @@ func RegisterHandler(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		c.JSON(http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	if user.Name == "" || user.Password == "" || user.Email == "" || user.OS == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invaild required fields"})
+		c.JSON(http.StatusBadRequest, "Invaild required fields")
 		log.Println("Error reqired fields")
 		return
 	}
 
 	if err, exist := postgresql.UserExist(user.Name, user.Email); err != nil || exist {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User exist"})
+		c.JSON(http.StatusBadRequest, "User exist")
 		log.Println(err)
 		return
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error hashing password"})
+		c.JSON(http.StatusBadRequest, "Error hashing password")
 		log.Println(err)
 		return
 	}
 
 	if err := postgresql.AddUser(user.Name, user.Email, string(hashedPassword), user.OS); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Database error"})
+		c.JSON(http.StatusBadRequest, "Database error")
 		log.Println(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"succesful": "User registred"})
+	c.JSON(http.StatusOK, "User registred")
 	log.Println("User registred")
 }
