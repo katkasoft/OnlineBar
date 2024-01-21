@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Tavern</title>
-  <link rel="stylesheet" type="text/css" href="static/styles/style.css">
-</head>
-
-<body>
-    <form id="Login">
-        <input type="text" id="username" name="username" placeholder="Введите ваше имя" >
-        <br>
-        <input type="password" id="password" name="password" placeholder="Введите пароль">
-        <br>
-        <button type="button" id="login-button" class="login-button">Авторизироваться</button>
-        <br>
-        <button type="button" id="register-button" class="register-button">Регистрация</button>
-
-    </form>
-    <script src="static/scripts/login.js"></script>
-</body>
+    <head>
+        <title>Register</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="/static/css/form.css">
+    </head>
+    <body>
+        <div id="center">
+            <h1>Register</h1>
+            <form>
+                <h3>Username</h3>
+                <input type="text" name="username" id="username">
+                <h3>Password</h3>
+                <input type="password" name="password" id="password"><br>
+                <input type="checkbox" name="show" id="show">
+                <label for="show">Show password</label>
+                <div id="buttonbox">
+                  <button class="mainbtn">Register</button>
+              </div>
+            </form>
+            <div id="linkbox">
+                <a href="/register">I don't have an account</a>
+            </div>
+        </div>
+    </body>
 </html>
