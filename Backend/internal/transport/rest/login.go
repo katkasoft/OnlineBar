@@ -15,27 +15,27 @@ func LoginHandler(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, err.Error())
 		log.Println("Invalid format")
 		return
 	}
 
 	if user.Name == "" || user.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid required fields"})
+		c.JSON(http.StatusBadRequest, "Invalid required fields")
 		log.Println("Error required fields")
 		return
 	}
 
 	// Check user existing
 	if err, exist := postgresql.UserExist(user.Name, user.Email); err != nil || exist {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
+		c.JSON(http.StatusBadRequest, "Wrong password or name")
 		log.Println(err)
 		return
 	}
 
 	storedPassword, err := postgresql.GetUserPassword(user.Name)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
+		c.JSON(http.StatusBadRequest, "Wrong password or name")
 		log.Println(err)
 		return
 	}
@@ -43,13 +43,13 @@ func LoginHandler(c *gin.Context) {
 	// Check password valid
 	err = bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(user.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
+		c.JSON(http.StatusBadRequest, "Wrong password or name")
 		log.Println(err)
 		return
 	}
 
 	if user.ID, err = postgresql.GetUserID(user.Name); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error to claim ID"})
+		c.JSON(http.StatusBadRequest, "Error to claim ID")
 		log.Println(err)
 		return
 	}
@@ -57,10 +57,10 @@ func LoginHandler(c *gin.Context) {
 	// Generate JWT token
 	token, err := services.GenerateJWT(user.Name, user.ID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to generate JWT"})
+		c.JSON(http.StatusUnauthorized, "Unable to generate JWT")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, token)
 	log.Printf("User %s authorized", user.Name)
 }

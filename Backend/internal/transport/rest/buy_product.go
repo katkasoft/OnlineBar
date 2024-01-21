@@ -17,20 +17,20 @@ func BuyHandler(c *gin.Context) {
 	var hasError bool
 
 	if err := services.CheckJWT(c.GetHeader("Authorization"), &claims); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		c.JSON(http.StatusBadRequest, "Invalid token")
 		log.Println("Invalid token")
 		return
 	}
 
 	if err := c.ShouldBindJSON(&productList); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, err.Error())
 		log.Println("Invalid format")
 		return
 	}
 
 	tx, err := postgresql.StartTransaction()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		c.JSON(http.StatusInternalServerError, "Internal Server Error")
 		log.Println("Error starting the transaction")
 		return
 	}
@@ -39,7 +39,7 @@ func BuyHandler(c *gin.Context) {
 	for _, product := range productList.Products {
 		if product.Name == "" || product.Cost == 0 || product.Quantity == 0 {
 			tx.Rollback()
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid required fields"})
+			c.JSON(http.StatusBadRequest, "Invalid required fields")
 			log.Println("Error required fields")
 			return
 		}
@@ -47,7 +47,7 @@ func BuyHandler(c *gin.Context) {
 		err := postgresql.PostBuyList(tx, claims.ID, product.Name, product.Cost, product.Quantity, time.Now())
 		if err != nil {
 			tx.Rollback()
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			c.JSON(http.StatusInternalServerError, "Internal Server Error")
 			log.Println("Error inserting product into the database")
 			hasError = true
 			break
@@ -62,11 +62,11 @@ func BuyHandler(c *gin.Context) {
 	err = tx.Commit()
 	if err != nil {
 		tx.Rollback()
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error committing the transaction"})
+		c.JSON(http.StatusInternalServerError, "Error committing the transaction")
 		log.Println("Error committing the transaction:", err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"done": "Product list added"})
+	c.JSON(http.StatusOK, "Product list added")
 	log.Printf("User with id %s added list of product", claims.ID)
 }

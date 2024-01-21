@@ -13,14 +13,14 @@ func TestFunc(c *gin.Context) {
 	var claims models.Claims
 
 	if authHeader == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
+		c.JSON(http.StatusUnauthorized, "Authorization header is missing")
 		return
 	}
 
 	if err := services.CheckJWT(authHeader, &claims); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid JWT"})
+		c.JSON(http.StatusBadRequest, "invalid JWT")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "pong"})
+	c.JSON(http.StatusOK, "pong")
 }

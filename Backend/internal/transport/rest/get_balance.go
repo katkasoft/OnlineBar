@@ -15,20 +15,20 @@ func GetBalance(c *gin.Context) {
 	var balance float64
 
 	if err := services.CheckJWT(c.GetHeader("Authorization"), &claims); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token"})
+		c.JSON(http.StatusBadRequest, "Invalid token")
 		log.Println("Invalid token")
 		return
 	}
 
 	balance, err := postgresql.GetBalance(claims.ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Error"})
+		c.JSON(http.StatusBadRequest, "Internal Error")
 		log.Println("Error to get User Balance")
 		log.Println(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"User balance: ": balance})
+	c.JSON(http.StatusOK, balance)
 	log.Printf("User with id %s get balance", claims.ID)
 
 }
