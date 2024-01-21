@@ -26,6 +26,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
+	// Check user existing
 	if err, exist := postgresql.UserExist(user.Name, user.Email); err != nil || exist {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
 		log.Println(err)
@@ -39,6 +40,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
+	// Check password valid
 	err = bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(user.Password))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password or name"})
@@ -52,7 +54,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	// Генерация JWT-токена
+	// Generate JWT token
 	token, err := services.GenerateJWT(user.Name, user.ID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to generate JWT"})

@@ -35,6 +35,7 @@ func BuyHandler(c *gin.Context) {
 		return
 	}
 
+	// Add product to db from massive
 	for _, product := range productList.Products {
 		if product.Name == "" || product.Cost == 0 || product.Quantity == 0 {
 			tx.Rollback()
@@ -53,6 +54,7 @@ func BuyHandler(c *gin.Context) {
 		}
 	}
 
+	// if 1 of product in massive invalid
 	if hasError {
 		return
 	}
