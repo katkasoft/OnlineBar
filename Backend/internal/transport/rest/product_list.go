@@ -20,6 +20,7 @@ func GetProductList(c *gin.Context) {
 		return
 	}
 
+	// Get massive of rpdoduct list
 	productList, err := postgresql.GetBuyList(claims.ID)
 
 	if err != nil {

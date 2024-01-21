@@ -33,30 +33,27 @@ func GenerateJWT(username string, id string) (string, error) {
 func CheckJWT(token string, claims *models.Claims) error {
 	const secretKey = "OnlineBar"
 
-	// Проверка префикса "Bearer"
 	if !strings.HasPrefix(token, "Bearer ") {
 		return errors.New("invalid token format, missing Bearer prefix")
 	}
 
-	// Извлечение токена без префикса "Bearer"
 	token = strings.TrimPrefix(token, "Bearer ")
 
-	// Парсинг токена с заполнением структуры Claims
 	_, err := jwt.ParseWithClaims(token, claims, func(t *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
 
 	if err != nil {
-		// Возвращение ошибки, если парсинг токена не удался
 		return err
 	}
 
-	// Проверка валидности токена
 	if err := claims.Valid(); err != nil {
-		// Возвращение ошибки, если токен не валиден
 		return errors.New("token not valid")
 	}
 
-	// Токен валиден
+	if claims.ExpiresAt > time.Now().Unix() {
+		return errors.New("token has expired")
+	}
+
 	return nil
 }
