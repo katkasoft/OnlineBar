@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
       name: name,
       password: password,
       email: email,
-      os: "Windows"
+      os: "Arch Linux" //I use arch btw
     };
   
     fetch("http://localhost:8080/register", {
@@ -32,8 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
       });
   }
   
-  function redirectToRegister() {и
+  function redirectToRegister() {
     console.log("Redirecting to registration page");
     window.location.href = "/registration"
   }
-  

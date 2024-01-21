@@ -13,7 +13,7 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("Frontend/templates/*")
 
-	/*r.Static("/static", "./Frontend")
+	r.Static("/static", "./Frontend")
 
 
 	r.GET("/", func(c *gin.Context) {
@@ -33,7 +33,6 @@ func setupRouter() *gin.Engine {
 			"title": "Register page",
 		})
 	})
-	*/
 
 	r.GET("/ping", rest.TestFunc)
 	r.GET("/product", rest.GetProductList)
