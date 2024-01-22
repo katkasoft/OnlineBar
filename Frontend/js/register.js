@@ -31,8 +31,3 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Error:", error);
       });
   }
-  
-  function redirectToRegister() {
-    console.log("Redirecting to registration page");
-    window.location.href = "/registration"
-  }

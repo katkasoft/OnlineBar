@@ -33,6 +33,16 @@ func setupRouter() *gin.Engine {
 		})
 	})
 
+	r.GET("/favicon.ico", func(c *gin.Context) {
+		c.File("./Frontend/img/favicon.ico")
+	})
+
+	r.NoRoute(func(c *gin.Context) {
+		c.HTML(404, "404.html", gin.H{
+			"title": "404 not found",
+		})
+	})
+
 	r.GET("/ping", rest.TestFunc)
 	r.GET("/product", rest.GetProductList)
 	r.GET("/balance/get", rest.GetBalance)
